@@ -1,5 +1,4 @@
 import pandas as pd
-import os
 import configuration
 import csv
 from haversine import haversine

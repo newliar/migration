@@ -144,7 +144,7 @@ class Migration_env:
             # normal_mig_cost = mig_cost - min_mig_cost/max_mig_cost-min_mig_cost
 
             # 总cost，在算法中设置为越大越好，时延、迁移代价和隐私的加权和
-            total_cost = - normal_mig_cost - normal_delay - float(100 * private_flag)
+            total_cost = - 0.5 * normal_mig_cost - 0.5 * normal_delay - float(100 * private_flag)
             # 将任务迁移位置更新,同时更新车辆位置和服务器位置
             task_car_state = next_car_state
             task_server_state = next_server_state
@@ -173,7 +173,7 @@ class Migration_env:
             # 计算通信延迟
 
             # 总cost，在算法中设置为越大越好，时延、迁移代价和隐私的加权和
-            total_cost = 0 - normal_delay - 100 * private_flag
+            total_cost = 0 - 0.5 * normal_delay - 100 * private_flag
 
         if next_car_state == self.end_car_state:
             reward = 10

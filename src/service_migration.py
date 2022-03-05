@@ -52,7 +52,7 @@ class Migration:
                             self.max_hoc, self.min_hoc, self.max_dis, self.min_dis)
 
         # 迭代100轮
-        for episode in range(100):
+        for episode in range(1000):
             # 待更新状态，分别是下一状态的车辆位置、服务器位置以及当前任务执行的车辆位置和服务器位置
             observation_car = env.start_car_state
             observation_server = env.start_server_state
