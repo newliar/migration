@@ -11,3 +11,9 @@ ROAD_TEL = os.path.dirname(os.getcwd()) + "/dataset/road_tel.csv"
 RESULT_PATH = os.path.dirname(os.getcwd()) + "/result/"
 
 MIGRATION_RESULT_PATH = RESULT_PATH + "migration_result/"
+
+FINAL_REWARD = 10
+
+REWARD_OMEGA = 0.5
+
+EPISODE = 1000
