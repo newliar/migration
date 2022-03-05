@@ -1,3 +1,5 @@
+import time
+
 import configuration
 from migration_RL import MigrationRL
 from mig_env import Migration_env
@@ -51,7 +53,8 @@ class Migration:
                             self.server_start_state, task_car_state, task_server_state, self.node_info_list,
                             self.max_hoc, self.min_hoc, self.max_dis, self.min_dis)
 
-        # 迭代100轮
+        start_time = time.time()
+        # 迭代
         for episode in range(configuration.EPISODE):
             # 待更新状态，分别是下一状态的车辆位置、服务器位置以及当前任务执行的车辆位置和服务器位置
             observation_car = env.start_car_state
@@ -77,11 +80,19 @@ class Migration:
                 observation_car = observation_car_
                 observation_server = observation_server_
                 if done:
+                    print(str(self.car_start_state)+'_'+str(self.car_end_state), "第"+str(episode)+"轮完成")
                     break
-            print("=======================" + str(self.car_start_state) + '_' + str(self.car_end_state) + "  " +
-                  str(episode) + "th Q-table=======================")
-            print(q_table)
-            print("================================================================")
+            # print("=======================" + str(self.car_start_state) + '_' + str(self.car_end_state) + "  " +
+            #       str(episode) + "th Q-table=======================")
+            # print(q_table)
+            # print("================================================================")
+        end_time = time.time()
+        print("=======================" + str(self.car_start_state) + '_' + str(self.car_end_state) +
+              "   Q-table=======================")
+        print(q_table)
+        print("==========================================================================")
+        print("time cost:", end_time-start_time)
+        print("==========================================================================\n")
         q_table.to_csv(configuration.MIGRATION_RESULT_PATH + str(self.car_start_state) + '_'
                        + str(self.car_end_state) + "_q_table.csv", encoding="utf-8")
         return q_table

@@ -26,8 +26,14 @@ if __name__ == "__main__":
     node_tel = pd.read_csv(configuration.ROAD_TEL, encoding='utf-8', header=None).values.tolist()
 
     # TODO Loop paths
-    mg = Migration(ACTIONS, tel_info, paths[0], node_info_list, int(node_tel[0][0]), int(node_tel[0][1]), int(node_tel[0][2]),
-                   int(node_tel[0][3]), node_tel[0][4], node_tel[0][5], node_tel[0][6], node_tel[0][7])
-    q_table = Migration.migrate(mg)
+    # mg = Migration(ACTIONS, tel_info, paths[0], node_info_list, int(node_tel[0][0]), int(node_tel[0][1]),
+    #                int(node_tel[0][2]),
+    #                int(node_tel[0][3]), node_tel[0][4], node_tel[0][5], node_tel[0][6], node_tel[0][7])
+    # q_table = Migration.migrate(mg)
+
+    for i in range(len(paths)):
+        mg = Migration(ACTIONS, tel_info, paths[i], node_info_list, int(node_tel[i][0]), int(node_tel[i][1]), int(node_tel[i][2]),
+                       int(node_tel[i][3]), node_tel[i][4], node_tel[i][5], node_tel[i][6], node_tel[i][7])
+        q_table = Migration.migrate(mg)
 
 

@@ -119,6 +119,7 @@ class Migration_env:
         private_flag = float(0)
         delay = float(0)
         total_cost = float(0)
+
         # 进行任务迁移
         if action != 0:
             # 获得待迁移服务器的位置
@@ -186,7 +187,7 @@ class Migration_env:
             done = True
             next_car_state = "ending"
             next_server_state = "ending"
-            print("over")
+            # print("over")
         else:
             reward = total_cost
             done = False

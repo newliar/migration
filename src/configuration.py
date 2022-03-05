@@ -12,8 +12,8 @@ RESULT_PATH = os.path.dirname(os.getcwd()) + "/result/"
 
 MIGRATION_RESULT_PATH = RESULT_PATH + "migration_result/"
 
-FINAL_REWARD = 10
+FINAL_REWARD = 1
 
-REWARD_OMEGA = 0.5
+REWARD_OMEGA = 0.2
 
 EPISODE = 1000
