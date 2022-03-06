@@ -32,8 +32,11 @@ if __name__ == "__main__":
     # q_table = Migration.migrate(mg)
 
     for i in range(len(paths)):
-        mg = Migration(ACTIONS, tel_info, paths[i], node_info_list, int(node_tel[i][0]), int(node_tel[i][1]), int(node_tel[i][2]),
-                       int(node_tel[i][3]), node_tel[i][4], node_tel[i][5], node_tel[i][6], node_tel[i][7])
-        q_table = Migration.migrate(mg)
+        # if i == 1:
+        #     break
+        for omega in configuration.OMEGA_LIST:
+            mg = Migration(ACTIONS, tel_info, paths[i], node_info_list, int(node_tel[i][0]), int(node_tel[i][1]), int(node_tel[i][2]),
+                           int(node_tel[i][3]), node_tel[i][4], node_tel[i][5], node_tel[i][6], node_tel[i][7], omega)
+            q_table = Migration.migrate(mg)
 
 

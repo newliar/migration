@@ -7,7 +7,7 @@ from mig_env import Migration_env
 
 class Migration:
     def __init__(self, actions, tel_info, path, node_info_list, car_start_state, car_end_state, server_start_state,
-                 server_end_state, max_hoc, min_hoc, max_dis, min_dis):
+                 server_end_state, max_hoc, min_hoc, max_dis, min_dis, omega):
         """
         对象参数定义
         :param actions:                 动作列表
@@ -22,6 +22,7 @@ class Migration:
         :param min_hoc:                 最小跳数
         :param max_dis:                 最大物理距离，计算时延
         :param min_dis:                 最小物理距离
+        :param omega:                   比例系数
         """
         self.actions = actions
         self.tel_info = tel_info
@@ -35,6 +36,7 @@ class Migration:
         self.min_hoc = min_hoc
         self.max_dis = max_dis
         self.min_dis = min_dis
+        self.omega = omega
 
     def migrate(self):
         # 设置初始基站服务器
@@ -51,7 +53,7 @@ class Migration:
         # 初始化环境，传入参数
         env = Migration_env(self.tel_info, self.path, self.actions, self.car_start_state, self.car_end_state,
                             self.server_start_state, task_car_state, task_server_state, self.node_info_list,
-                            self.max_hoc, self.min_hoc, self.max_dis, self.min_dis)
+                            self.max_hoc, self.min_hoc, self.max_dis, self.min_dis, self.omega)
 
         start_time = time.time()
         # 迭代
@@ -70,17 +72,20 @@ class Migration:
                 action = RL.choose_action(observation_car, observation_server, env)
                 # 更新下一步迁移位置，和任务执行位置，奖励以及完成标志
                 observation_car_, observation_server_, observation_task_car_, observation_task_server_, reward, done \
-                    = env.step(observation_car, observation_server, prior_car_state, prior_server_state, task_car_state,
-                               task_server_state, action)
+                    = env.step(observation_car, observation_server, prior_car_state, prior_server_state, observation_task_car,
+                               observation_task_server, action)
 
                 q_table = RL.learn(observation_car, observation_car_, observation_server, observation_server_, action,
                                    reward)
+                # 更新状态
                 prior_car_state = observation_car
                 prior_server_state = observation_server
                 observation_car = observation_car_
                 observation_server = observation_server_
+                observation_task_car = observation_task_car_
+                observation_task_server = observation_task_server_
                 if done:
-                    print(str(self.car_start_state)+'_'+str(self.car_end_state), "第"+str(episode)+"轮完成")
+                    print("omega= ", str(self.omega), str(self.car_start_state)+'_'+str(self.car_end_state), "第"+str(episode)+"轮完成")
                     break
             # print("=======================" + str(self.car_start_state) + '_' + str(self.car_end_state) + "  " +
             #       str(episode) + "th Q-table=======================")
@@ -93,6 +98,6 @@ class Migration:
         print("==========================================================================")
         print("time cost:", end_time-start_time)
         print("==========================================================================\n")
-        q_table.to_csv(configuration.MIGRATION_RESULT_PATH + str(self.car_start_state) + '_'
+        q_table.to_csv(configuration.MIGRATION_RESULT_PATH + str(self.omega) + '_' + str(self.car_start_state) + '_'
                        + str(self.car_end_state) + "_q_table.csv", encoding="utf-8")
         return q_table

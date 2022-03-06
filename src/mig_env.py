@@ -5,7 +5,7 @@ import configuration
 
 class Migration_env:
     def __init__(self, tel_info, path, action_list, start_car_state, end_car_state, start_server_state, task_car_state,
-                 task_server_state, node_info, max_hoc, min_hoc, max_dis, min_dis):
+                 task_server_state, node_info, max_hoc, min_hoc, max_dis, min_dis, omega):
         """
         对象参数定义
         :param tel_info:                基站信息，包括距离，可用容量，传输速度，隐私标记
@@ -35,6 +35,7 @@ class Migration_env:
         self.min_hoc = min_hoc
         self.max_dis = max_dis
         self.min_dis = min_dis
+        self.omega = omega
 
     # 返回服务器信息列表,字符串列表
     def get_server_info(self, car_state, server_state):
@@ -127,6 +128,7 @@ class Migration_env:
 
             # 计算相关指标
             # 获得下一次车子位置与基站之间的距离
+            car_dis = self.get_geo_distance(next_car_state, int(task_car_state))
             server_dis = self.get_distance(next_car_state, next_server_state)
             # 获得传输速度，范围10~10000 MB/s
             comm_speed = self.get_server_speed(next_car_state, next_server_state)
@@ -136,7 +138,7 @@ class Migration_env:
             # 获得时延，做归一化处理
             max_delay = self.max_dis / 10
             min_delay = self.min_dis / 10000
-            delay = server_dis / comm_speed
+            delay = abs(car_dis-server_dis) / comm_speed
             normal_delay = delay - min_delay / max_delay - min_delay
             # normal_delay = np.true_divide(delay - min_delay, max_delay-min_delay)
 
@@ -148,9 +150,7 @@ class Migration_env:
             # normal_mig_cost = mig_cost - min_mig_cost/max_mig_cost-min_mig_cost
 
             # 总cost，在算法中设置为越大越好，时延、迁移代价和隐私的加权和
-            total_cost = - configuration.REWARD_OMEGA * normal_mig_cost - (
-                        1 - configuration.REWARD_OMEGA) * normal_delay \
-                         - float(100 * private_flag)
+            total_cost = - self.omega * normal_mig_cost + (1 - self.omega) * normal_delay - float(100 * private_flag)
             # 将任务迁移位置更新,同时更新车辆位置和服务器位置
             task_car_state = next_car_state
             task_server_state = next_server_state
@@ -179,8 +179,7 @@ class Migration_env:
             # 计算通信延迟
 
             # 总cost，在算法中设置为越大越好，时延、迁移代价和隐私的加权和
-            total_cost = configuration.REWARD_OMEGA * mig_cost - (1 - configuration.REWARD_OMEGA) * normal_delay - 100 \
-                         * private_flag
+            total_cost = self.omega * mig_cost - (1 - self.omega) * normal_delay - 100 * private_flag
 
         if next_car_state == self.end_car_state:
             reward = configuration.FINAL_REWARD
